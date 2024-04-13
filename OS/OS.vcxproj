@@ -127,22 +127,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BufManager.cpp" />
+    <ClCompile Include="DiskDriver.cpp" />
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
+    <ClCompile Include="Inode.cpp" />
+    <ClCompile Include="InodeTable.cpp" />
+    <ClCompile Include="Kernel.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buf.h" />
     <ClInclude Include="BufManager.h" />
     <ClInclude Include="DIrectoryEntry.h" />
     <ClInclude Include="DiskDriver.h" />
-    <ClInclude Include="DiskInode.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="Inode.h" />
     <ClInclude Include="InodeTable.h" />
-    <ClInclude Include="IOParam.h" />
     <ClInclude Include="Kernel.h" />
-    <ClInclude Include="OpenFiles.h" />
     <ClInclude Include="OpenFileTable.h" />
     <ClInclude Include="SuperBlock.h" />
     <ClInclude Include="User.h" />

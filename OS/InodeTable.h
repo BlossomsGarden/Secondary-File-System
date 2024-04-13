@@ -3,6 +3,12 @@
 #include "Inode.h"
 #include "FileSystem.h"
 
+
+//整个程序中共享一个全局的InodeTable
+extern InodeTable g_InodeTable;
+
+
+//内存中的Inode表
 //负责内存 Inode 的分配和释放
 class InodeTable {
 public:
@@ -22,31 +28,26 @@ public:
 	//初始化对 g_FileSystem 对象的引用
 	void Initialize();
 
-	//根据指定设备号 dev，外存 Inode 编号获取对应 Inode:
+	//根据指定外存 Inode 编号获取对应 Inode:
 	//如果该 Inode 已经在内存中，对其上锁并返回该内存 Inode
 	//如果不在内存中，则将其读入内存后上锁并返回该内存 Inode
 	Inode* IGet(int inumber);
 
-	//减少该内存 Inode 的引用计数，如果此 Inode 已经没有目录项指向它，
-	//且无进程引用该 Inode，则释放此文件占用的磁盘块
+
+	//减少该内存 Inode 的引用计数
+	//若已经没有目录项指向它且无进程引用，则释放此Inode指向的文件所占用的磁盘块
 	void IPut(Inode* pNode);
+
 
 	//将所有被修改过的内存 Inode 更新到对应外存 Inode 中
 	void UpdateInodeTable();
 	
 	//检查设备 dev 上编号为 inumber 的外存 inode 是否有内存拷贝
 	//如果有则返回该内存 Inode 在内存 Inode 表中的索引
-	int IsLoaded(int inumber);
+	int InodeIsLoaded(int inumber);
 
 	//在内存 Inode 表中寻找一个空闲的内存 Inode
 	Inode* GetFreeInode();
 
 };
 
-InodeTable ::InodeTable ()
-{
-}
-
-InodeTable ::~InodeTable ()
-{
-}

@@ -18,14 +18,6 @@ public:
 	int padding[47]; /* 填充使 SuperBlock 块大小等于 1024 字节，占据 2 个扇区 */
 
 public:
-	SuperBlock();
-	~SuperBlock();
+	SuperBlock(){};
+	~SuperBlock(){};
 };
-
-SuperBlock::SuperBlock()
-{
-}
-
-SuperBlock::~SuperBlock()
-{
-}

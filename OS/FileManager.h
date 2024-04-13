@@ -25,9 +25,14 @@ public:
 	/* 对全局对象 g_OpenFileTable 的引用，该对象负责打开文件表项的管理 */
 	OpenFileTable* m_OpenFileTable;
 
+private:
+	static FileManager instance;
+
 public:
 	FileManager ();
 	~FileManager ();
+
+	static FileManager& GetInstance();
 
 	
 	//初始化对全局对象的引用

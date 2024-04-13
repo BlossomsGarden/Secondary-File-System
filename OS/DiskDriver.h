@@ -24,10 +24,4 @@ public:
 	void IO(Buf* bp);
 };
 
-DiskDriver::DiskDriver()
-{
-}
 
-DiskDriver::~DiskDriver()
-{
-}

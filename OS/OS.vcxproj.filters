@@ -18,6 +18,36 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Kernel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DiskDriver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Inode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BufManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="InodeTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DiskDriver.h">
@@ -35,19 +65,10 @@
     <ClInclude Include="BufManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DiskInode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="SuperBlock.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="FileSystem.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="IOParam.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenFiles.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="OpenFileTable.h">

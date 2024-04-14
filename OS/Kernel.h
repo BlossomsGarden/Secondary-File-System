@@ -1,5 +1,4 @@
 #pragma once
-#include "Kernel.h"
 #include "BufManager.h"
 #include "FileManager.h"
 #include "User.h"
@@ -11,18 +10,24 @@ class Kernel {
 private:
 	static Kernel instance; /* Kernel 单体类实例 */
 
-	BufManager* m_BufferManager;
+	BufManager* m_BufManager;
 	FileSystem* m_FileSystem;
 	FileManager* m_FileManager;
-	DiskDriver* m_DiskDriver;
 	User* m_User;
 
+
+	//磁盘镜像文件名
+	static const char* DISK_FILE_NAME;
+	//数据块大小为512字节
+	static const int BLOCK_SIZE = 512;
+	//磁盘镜像文件指针
+	File* fp;
 
 public:
 	Kernel();
 	~Kernel();
 
-	static Kernel& Instance();
+	static Kernel& GetInstance();
 
 	/* 该函数完成初始化内核大部分数据结构的初始化 */
 	void Initialize(); 
@@ -30,7 +35,6 @@ public:
 	BufManager& GetBufManager();
 	FileManager& GetFileManager();
 	FileSystem& GetFileSystem();
-	DiskDriver& GetDiskDriver();
 	User& GetUser(); /* 获取当前进程的 User 结构 */
 
 private:

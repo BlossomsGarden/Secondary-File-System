@@ -1,10 +1,7 @@
 #pragma once
-#include "FileManager.h"
-#include "Inode.h"
+#define _CRT_SECURE_NO_WARNINGS
 #include "InodeTable.h"
-#include "File.h"
 #include "OpenFileTable.h"
-#include "FileSystem.h"
 
 
 //封装了对文件的系统调用的核心态操作，供顶层 API 模块进行调用
@@ -18,31 +15,34 @@ public:
 	};
 	/* 根目录内存 Inode */
 	Inode* rootDirInode;
+
 	/* 对全局对象 g_FileSystem 的引用，该对象负责管理文件系统存储资源 */
 	FileSystem* m_FileSystem;
+
 	/* 对全局对象 g_InodeTable 的引用，该对象负责内存 Inode 表的管理 */
 	InodeTable* m_InodeTable;
+
 	/* 对全局对象 g_OpenFileTable 的引用，该对象负责打开文件表项的管理 */
 	OpenFileTable* m_OpenFileTable;
 
-private:
+
 	static FileManager instance;
 
 public:
 	FileManager ();
 	~FileManager ();
 
-	static FileManager& GetInstance();
+	static FileManager* GetInstance();
 
 	
 	//初始化对全局对象的引用
 	void Initialize();
 	
 	//Open()系统调用处理过程
-	void Open();
+	void Open(const char* path);
 	
 	//Creat()系统调用处理过程
-	void Creat();
+	int Creat(const char* path);
 	
 	//Open()、Creat()系统调用的公共部分
 	void Open1(Inode* pInode, int mode, int trf);
@@ -73,17 +73,14 @@ public:
 	/*
    * Read()系统调用处理过程
    */
-	void Read();
+	int Read(int fd, unsigned char* buffer, int count);
 
-	/*
-   * Write()系统调用处理过程
-   */
-	void Write();
+	int Write(int fd, unsigned char* buffer, int count);
 
 	/*
    * 读写系统调用公共部分代码
    */
-	void Rdwr(enum File::FileFlags mode);
+	int Rdwr(enum File::FileFlags mode, int fd, unsigned char* buffer, int count);
 
 	/*
    * 目录搜索，将路径转化为相应的 Inode，
@@ -109,27 +106,16 @@ public:
 	/*
    * 设置当前工作路径
    */
-	void SetCurDir(char* pathname);
-
-	/*
-   * 检查对文件或目录的搜索、访问权限，作为系统调用的辅助函数
-   */
-	int Access(Inode* pInode, unsigned int mode);
+	void SetCurDir(const char* pathname);
 
 	/* 改变当前工作目录 */
-	void ChDir();
+	void ChDir(const char* path);
 
 	/* 取消文件 */
-	void UnLink();
+	void UnLink(const char* path);
 
 	/* 用于建立特殊设备文件的系统调用 */
-	void MkNod();
+	int MkNod(const char* path, int mode);
 };
 
-FileManager ::FileManager ()
-{
-}
 
-FileManager ::~FileManager ()
-{
-}

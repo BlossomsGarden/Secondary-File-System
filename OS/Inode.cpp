@@ -8,7 +8,35 @@ using namespace std;
 
 
 /*================================ Inode ===================================*/
-Inode::Inode(){}
+/*	预读块的块号，对普通文件这是预读块所在的物理块号。对硬盘而言，这是当前物理块（扇区）的下一个物理块（扇区）*/
+int Inode::rablock = 0;
+
+/* 内存打开 i节点*/
+Inode::Inode(){
+	/* 清空Inode对象中的数据 */
+	// this->Clean();
+	/* 去除this->Clean();的理由：
+	 * Inode::Clean()特定用于IAlloc()中清空新分配DiskInode的原有数据，
+	 * 即旧文件信息。Clean()函数中不应当清除i_dev, i_number, i_flag, i_count,
+	 * 这是属于内存Inode而非DiskInode包含的旧文件信息，而Inode类构造函数需要
+	 * 将其初始化为无效值。
+	 */
+
+	 /* 将Inode对象的成员变量初始化为无效值 */
+	this->i_flag = 0;
+	this->i_mode = 0;
+	this->i_count = 0;
+	this->i_nlink = 0;
+	this->i_dev = -1;
+	this->i_number = -1;
+	this->i_uid = -1;
+	this->i_gid = -1;
+	this->i_size = 0;
+	this->i_lastr = -1;
+	for (int i = 0; i < 10; i++){
+		this->i_addr[i] = 0;
+	}
+}
 Inode::~Inode(){}
 
 
@@ -20,10 +48,10 @@ int Inode::Bmap(int lbn) {
 	int phyBlkno; /* 转换后的物理盘块号 */
 	int* iTable;  /* 用于访问索引盘块中一次间接、两次间接索引表 */
 	int index;
-	User& u = User::GetInstance();
+	User& u = *User::GetInstance();
 
-	BufManager& bufManager = BufManager::GetInstance();
-	FileSystem& fileSystem = FileSystem::GetInstance();
+	BufManager& bufManager = *BufManager::GetInstance();
+	FileSystem& fileSystem = *FileSystem::GetInstance();
 
 	/*
 	 * Unix V6++的文件索引结构：(小型、大型和巨型文件)
@@ -94,9 +122,8 @@ int Inode::Bmap(int lbn) {
 			pFirstBuf = bufManager.Bread(phyBlkno);
 		}
 
-		pFirstBuf = pSecondBuf;
-		/* 令iTable指向一次间接索引表 */
-		iTable = (int*)pSecondBuf->b_addr;
+		/* 获取缓冲区首址 */
+		iTable = (int*)pFirstBuf->b_addr;
 
 		/* 计算逻辑块号lbn最终位于一次间接索引表中的表项序号index */
 		index = (lbn - Inode::SMALL_FILE_BLOCK) % Inode::ADDRESS_PER_INDEX_BLOCK;
@@ -208,8 +235,8 @@ void Inode::ReadI() {
 	int nbytes; /* 传送至用户目标区字节数量 */
 	int dev;
 	Buf* pBuf;
-	User& u = User::GetInstance();
-	BufManager& bufManager = BufManager::GetInstance();
+	User& u = *User::GetInstance();
+	BufManager& bufManager = *BufManager::GetInstance();
 
 	//若需要读字节数为零，则返回
 	if (u.u_IOParam.m_Count==0){
@@ -295,8 +322,8 @@ void Inode::WriteI() {
 	short dev;
 	Buf* pBuf;
 
-	User& u = User::GetInstance();
-	BufManager& bufManager = BufManager::GetInstance();
+	User& u = *User::GetInstance();
+	BufManager& bufManager = *BufManager::GetInstance();
 
 
 	/* 设置Inode被访问标志位 */
@@ -327,7 +354,7 @@ void Inode::WriteI() {
 
 		if (Inode::BLOCK_SIZE == nbytes){
 			/* 如果写入数据正好满一个字符块，则为其分配缓存 */
-			pBuf = bufManager.GetBlk(dev, bn);
+			pBuf = bufManager.GetBlk(bn);
 		}
 		else{
 			/* 写入数据不满一个字符块，先读后写（读出该字符块以保护不需要重写的数据） */
@@ -382,9 +409,9 @@ void Inode::WriteI() {
 void Inode::IUpdate(int time){
 	Buf* pBuf;
 	DiskInode dInode;
-	FileSystem& filesys = FileSystem::GetInstance();
-	User& u = User::GetInstance();
-	BufManager& bufManager = BufManager::GetInstance();
+	FileSystem& filesys = *FileSystem::GetInstance();
+	User& u = *User::GetInstance();
+	BufManager& bufManager = *BufManager::GetInstance();
 	//DeviceManager& devMgr = *DeviceManager::getInst();
 
 	/* 当IUPD和IACC标志之一被设置，才需要更新相应DiskInode
@@ -437,9 +464,9 @@ void Inode::IUpdate(int time){
 /*删此Inode对应的文件内容*/
 void Inode::ITrunc(){
 	/* 经由磁盘高速缓存读取存放一次间接、两次间接索引表的磁盘块 */
-	BufManager& bufManager = BufManager::GetInstance();
+	BufManager& bufManager = *BufManager::GetInstance();
 	/* 获取g_FileSystem对象的引用，执行释放磁盘块的操作 */
-	FileSystem& filesys = FileSystem::GetInstance();
+	FileSystem& filesys = *FileSystem::GetInstance();
 
 
 	//采用FILO方式释放，以尽量使得SuperBlock中记录的空闲盘块号连续

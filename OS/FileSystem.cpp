@@ -3,7 +3,6 @@
 #include "Utility.h"
 #include "User.h"
 #include "Windows.h"
-#include "DiskInode.h"
 #include "Buf.h"
 #include <iostream>
 using namespace std;
@@ -39,8 +38,8 @@ Mount::~Mount()
 FileSystem::FileSystem(){}
 FileSystem::~FileSystem(){}
 
-FileSystem& FileSystem::GetInstance() {
-	return FileSystem::instance;
+FileSystem* FileSystem::GetInstance() {
+	return &FileSystem::instance;
 }
 
 
@@ -50,7 +49,7 @@ void FileSystem::Initialize(){
 		this->m_Mount[i].m_dev = -1;
 		this->m_Mount[i].m_inodep = NULL;
 	}
-	this->m_BufManager = &BufManager::GetInstance();
+	this->m_BufManager = BufManager::GetInstance();
 	this->updlock = 0;
 }
 
@@ -88,7 +87,7 @@ void FileSystem::FormatDisk(int dev){
 		int* p = (int*)&superBlock + j * 128;
 
 		/* 将要写入到设备dev上的SUPER_BLOCK_SECTOR_NUMBER + j扇区中去 */
-		Buf* pBuf = this->m_BufManager->GetBlk(dev, FileSystem::SUPER_BLOCK_SECTOR_NUMBER + j);
+		Buf* pBuf = this->m_BufManager->GetBlk(FileSystem::SUPER_BLOCK_SECTOR_NUMBER + j);
 
 		/* 将SuperBlock中第0 - 511字节写入缓存区 */
 		DWordCopy(p, (int*)pBuf->b_addr, 128);
@@ -114,12 +113,12 @@ void FileSystem::FormatDisk(int dev){
 	rootdir.IUpdate(time(nullptr));
 	Update();
 
-	FileManager::GetInstance().Initialize();
+	FileManager::GetInstance()->Initialize();
 }
 
 //读取存放SuperBlock的两个扇区到本文件开头定义的全局SuperBlock变量
 void FileSystem::LoadSuperBlock(){
-	BufManager& bufManager = BufManager::GetInstance();
+	BufManager& bufManager = *BufManager::GetInstance();
 	Buf* pBuf;
 	for (int i = 0; i < 2; i++){
 		int* p = (int*)&g_spb + i * 128;
@@ -203,7 +202,7 @@ void FileSystem::Update(){
 				int* p = (int*)superBlock + j * 128;
 
 				/* 将要写入到设备dev上的SUPER_BLOCK_SECTOR_NUMBER + j扇区中去 */
-				pBuf = this->m_BufManager->GetBlk(this->m_Mount[i].m_dev, FileSystem::SUPER_BLOCK_SECTOR_NUMBER + j);
+				pBuf = this->m_BufManager->GetBlk(FileSystem::SUPER_BLOCK_SECTOR_NUMBER + j);
 
 				/* 将SuperBlock中第0 - 511字节写入缓存区 */
 				DWordCopy(p, (int*)pBuf->b_addr, 128);
@@ -230,7 +229,7 @@ Inode* FileSystem::IAlloc(int dev){
 	SuperBlock* superBlock;
 	Buf* pBuf;
 	Inode* pNode;
-	User& u = User::GetInstance();
+	User& u = *User::GetInstance();
 	int ino; /* 分配到的空闲外存Inode编号 */
 
 	/* 获取相应设备的SuperBlock内存副本 */
@@ -268,7 +267,7 @@ Inode* FileSystem::IAlloc(int dev){
 				 * 该inode是空闲的，因为有可能是内存inode没有写到
 				 * 磁盘上,所以要继续搜索内存inode中是否有相应的项
 				 */
-				if (g_InodeTable.IsLoaded(dev, ino) == -1){
+				if (g_InodeTable.InodeIsLoaded(ino) == -1){
 					/* 该外存Inode没有对应的内存拷贝，将其记入空闲Inode索引表 */
 					superBlock->s_inode[superBlock->s_ninode++] = ino;
 
@@ -305,7 +304,7 @@ Inode* FileSystem::IAlloc(int dev){
 		ino = superBlock->s_inode[--superBlock->s_ninode];
 
 		/* 将空闲Inode读入内存 */
-		pNode = g_InodeTable.IGet(dev, ino);
+		pNode = g_InodeTable.IGet(ino);
 		/* 未能分配到内存inode */
 		if (NULL == pNode){
 			return NULL;
@@ -355,7 +354,7 @@ Buf* FileSystem::Alloc(int dev){
 	int blkno; /* 分配到的空闲磁盘块编号 */
 	SuperBlock* superBlock;
 	Buf* pBuf;
-	User& u = User::GetInstance();
+	User& u = *User::GetInstance();
 
 	/* 获取SuperBlock对象的内存副本 */
 	superBlock = this->GetSuperBlock();
@@ -428,7 +427,7 @@ Buf* FileSystem::Alloc(int dev){
 	}
 
 	/* 普通情况下成功分配到一空闲磁盘块 */
-	pBuf = this->m_BufManager->GetBlk(dev, blkno); /* 为该磁盘块申请缓存 */
+	pBuf = this->m_BufManager->GetBlk(blkno); /* 为该磁盘块申请缓存 */
 	this->m_BufManager->ClrBuf(pBuf);			  /* 清空缓存中的数据 */
 	superBlock->s_fmod = 1;									  /* 设置SuperBlock被修改标志 */
 
@@ -471,7 +470,7 @@ void FileSystem::Free(int dev, int blkno){
 		 * 使用当前Free()函数正要释放的磁盘块，存放前一组100个空闲
 		 * 磁盘块的索引表
 		 */
-		pBuf = this->m_BufManager->GetBlk(dev, blkno); /* 为当前正要释放的磁盘块分配缓存 */
+		pBuf = this->m_BufManager->GetBlk(blkno); /* 为当前正要释放的磁盘块分配缓存 */
 
 		/* 从该磁盘块的0字节开始记录，共占据4(s_nfree)+400(s_free[100])个字节 */
 		int* p = (int*)pBuf->b_addr;

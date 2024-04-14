@@ -5,19 +5,25 @@
 using namespace std;
 
 
+
+//定义内存Inode表的实例
+//头文件里的 extern 只是声明这里有一个，你这里还要定义的
+InodeTable g_InodeTable;
+
+
 InodeTable::InodeTable(){}
 InodeTable ::~InodeTable(){}
 
 
 void InodeTable::Initialize(){
-    this->m_FileSystem = &FileSystem::GetInstance();
+    this->m_FileSystem = FileSystem::GetInstance();
 }
 
 
 /*通过设备号inumber和获取一个Inode的内存拷贝*/
 Inode* InodeTable::IGet(int inumber){
     Inode* pInode;
-    User& u = User::GetInstance();
+    User& u = *User::GetInstance();
 
     /* 检查指定设备dev中编号为inumber的外存Inode是否有内存拷贝 */
     int index = InodeTable::InodeIsLoaded(inumber);
@@ -48,7 +54,7 @@ Inode* InodeTable::IGet(int inumber){
             pInode->i_count = 1; // DEBUG 修改了从内存读取来的Inode引用数默认为1
             pInode->i_lastr = -1;
 
-            BufManager& bufmanager = BufManager::GetInstance();
+            BufManager& bufmanager = *BufManager::GetInstance();
             /* 将该外存Inode读入缓冲区 */
             Buf* pBuf = bufmanager.Bread(FileSystem::INODE_ZONE_START_SECTOR + inumber / FileSystem::INODE_NUMBER_PER_SECTOR);
             /* 将缓冲区中的外存Inode信息拷贝到新分配的内存Inode中 */

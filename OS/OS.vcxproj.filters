@@ -21,9 +21,6 @@
     <ClCompile Include="Kernel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DiskDriver.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Inode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -48,11 +45,14 @@
     <ClCompile Include="File.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="OpenFileTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Shell.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DiskDriver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="File.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -80,9 +80,6 @@
     <ClInclude Include="FileManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DIrectoryEntry.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="User.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -90,6 +87,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shell.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

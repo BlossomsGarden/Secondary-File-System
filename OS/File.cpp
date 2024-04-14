@@ -38,7 +38,7 @@ OpenFiles::~OpenFiles(){}
 //进程打开文件时，在其OpenFileTable中分配一个空闲表项插槽
 int OpenFiles::AllocFreeSlot(){
 	int i;
-	User& u = User::GetInstance();
+	User& u = *User::GetInstance();
 
 	for (i = 0; i < OpenFiles::MAXOPENFILES; i++){
 		if (this->ProcessOpenFileTable[i] == nullptr){
@@ -56,7 +56,7 @@ int OpenFiles::AllocFreeSlot(){
 //根据用户系统调用提供的文件描述符参数fd，找到对应的打开文件控制块File结构
 File* OpenFiles::GetFileByFd(int fd){
 	File* pFile;
-	User& u = User::GetInstance();
+	User& u = *User::GetInstance();
 
 	//如果打开文件描述符的值超出了范围
 	if (fd < 0 || fd >= OpenFiles::MAXOPENFILES){

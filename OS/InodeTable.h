@@ -1,8 +1,9 @@
 #pragma once
-#include "InodeTable.h"
 #include "Inode.h"
 #include "FileSystem.h"
 
+//不声明喜提报错：C4430 缺少类型说明符 - 假定为 int
+class InodeTable;
 
 //整个程序中共享一个全局的InodeTable
 extern InodeTable g_InodeTable;

@@ -1,5 +1,4 @@
 #pragma once
-#include "Buf.h"
 
 class Buf {
 public:

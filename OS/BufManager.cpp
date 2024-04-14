@@ -1,7 +1,6 @@
 #include "BufManager.h"
 #include "Windows.h"
 #include <thread>
-using namespace std;
 
 
 BufManager::BufManager(){}
@@ -23,11 +22,11 @@ void BufManager::Initialize() {
 
 
 //模仿Kernel类获取缓存管理器的类实例
-BufManager& BufManager::GetInstance() {
-	return BufManager::instance;
+BufManager* BufManager::GetInstance() {
+	return &BufManager::instance;
 }
 Buf& BufManager::GetBFreeList(){
-    return BufManager::bFreeList;
+    return BufManager::GetBFreeList();
 }
 
 
@@ -51,7 +50,7 @@ void BufManager::NotAvail(Buf* bp) {
 //Bread在GetBlk结束后解锁
 Buf* BufManager::Bread(int blkno) {
     // 查设备表
-    Buf* bp = GetBlk(dev, blkno);
+    Buf* bp = GetBlk(blkno);
 
     // 若已在缓存队列中，即B_DONE已设置，无需读磁盘了 */
     if (bp->b_flags & Buf::B_DONE) {
@@ -65,11 +64,11 @@ Buf* BufManager::Bread(int blkno) {
     return bp;
 }
 
-Buf* BufManager::GetBlk(int dev, int blkno) {
+Buf* BufManager::GetBlk(int blkno) {
     Buf* buf_reuse = nullptr;
     // 搜索全部缓存，看有没有之前已经分配给这个块可以重用的
     for (int i = 0; i < NBUF; i++) {
-        if (m_Buf[i].b_dev == dev && m_Buf[i].b_blkno == blkno) {
+        if (m_Buf[i].b_blkno == blkno) {
             buf_reuse = &m_Buf[i];
             break;
         }
@@ -98,10 +97,9 @@ Buf* BufManager::GetBlk(int dev, int blkno) {
         if (buf_first->b_flags & Buf::BufFlag::B_DELWRI) {
             // 直接送Bwrite
             Bwrite(buf_first);
-            return GetBlk(dev, blkno);
+            return GetBlk(blkno);
         }
         buf_first->b_blkno = blkno;
-        buf_first->b_dev = dev;
         buf_first->b_flags = Buf::BufFlag::B_BUSY;
         return buf_first;
     }
@@ -109,7 +107,7 @@ Buf* BufManager::GetBlk(int dev, int blkno) {
     else if (buf_reuse == nullptr && !bFreeList.b_back) {
         // 睡会儿算了
         Sleep(200);
-        return GetBlk(dev, blkno);
+        return GetBlk(blkno);
     }
 
     //其他情况也不知道还有什么情况
@@ -156,7 +154,8 @@ void BufManager::Bwrite(Buf* bp){
     else{
         // 创建新线程来模拟异步写
         // thread只能调用普通函数不能调用类函数，于是新定义了_Bawrite
-        thread writeThread(_Bawrite, BufManager::GetInstance, bp);
+        BufManager* bufManager = BufManager::GetInstance();
+        std::thread writeThread(_Bawrite, bufManager, bp);
         writeThread.detach();
     }
     return;

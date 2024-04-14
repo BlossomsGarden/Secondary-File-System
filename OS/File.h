@@ -1,5 +1,4 @@
 #pragma once
-#include "File.h"
 #include "Inode.h"
 
 //记录了对文件读、写时需用到的读写偏移量、字节数以及目标区域首地址参数

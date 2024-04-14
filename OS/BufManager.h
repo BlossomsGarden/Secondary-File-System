@@ -1,7 +1,6 @@
 #pragma once
-#include "BufManager.h"
 #include "Buf.h"
-#include "DiskDriver.h"
+#include <iostream>
 #include <mutex>
 
 //单开一个类用以管理Buf类塑造出的缓存块与自由缓存队列
@@ -25,23 +24,23 @@ public:
 
 
 	//用以解决异步写和getblk进程冲突
-	mutex buf_mutex[NBUF];
+	std::mutex buf_mutex[NBUF];
 
-	//指向磁盘驱动模块全局对象
-	//通过调用其接口在缓存块和虚拟磁盘文件之间进行读写
-	DiskDriver* m_DiskDriver;
+	////指向磁盘驱动模块全局对象
+	////通过调用其接口在缓存块和虚拟磁盘文件之间进行读写
+	//DiskDriver* m_DiskDriver;
 
 public:
 	BufManager ();
 	~BufManager ();
 
-	static BufManager& GetInstance();
+	static BufManager* GetInstance();
 
 	//缓存控制块队列的初始化。将缓存控制块中 b_addr 指向相应缓冲区首地址
 	void Initialize();
 
 	//申请一块缓存，用于读写设备 dev 上的字符块blkno
-	Buf* GetBlk(int dev, int blkno);
+	Buf* GetBlk(int blkno);
 
 	//释放缓存控制块 buf，指把它放在自由缓存队列队尾去
 	void Brelse(Buf* bp);

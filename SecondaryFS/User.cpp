@@ -347,7 +347,7 @@ bool User::checkPathName(string path) {
 
 bool User::IsError() {
     if (u_error != myNOERROR) {
-        cout << "errno = " << u_error;
+        //cout << "errno = " << u_error;
         EchoError(u_error);
         u_error = myNOERROR;
         return true;

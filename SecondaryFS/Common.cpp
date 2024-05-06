@@ -24,12 +24,12 @@ vector<string> getCmd(string str){
 }
 
 void Usage() {
-	cout << endl;
+	cout << "Usage:" << endl;
 	cout << endl;
 	cout << "ls                                 list directorys and files in current path\n";
 	cout << "mkdir <path>                       create a directory\n";
 	cout << "cd <path>                          change current path\n";
-	cout << "fcreat <path>                      create a file or directory\n";
+	cout << "fcreat <path> [mode]               create a file or directory\n";
 	cout << "                                   mode: -rw     read and write\n";
 	cout << "                                         -r      only read\n";
 	cout << "                                         -w      only write\n";
@@ -58,52 +58,104 @@ void exeCmd(vector<string> cmdList){
 	if (cmdList.size() == 0) {
 		return;
 	}
-
 	string cmd = cmdList[0];
 
 	if (cmd == "fcreat") {
-		// globalUser.Mkdir(cmdList[1]);
-		// cout << cmdList[1] << " " << cmdList[2] << endl;
+		if (cmdList.size() < 3) {
+			cout << "Command - fcreat requires 2 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Create(cmdList[1], cmdList[2]);
 	}
 	else if (cmd == "fopen") {
+		if (cmdList.size() < 3) {
+			cout << "Command - fopen requires 2 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Open(cmdList[1], cmdList[2]);
 	}
 	else if (cmd == "fclose") {
+		if (cmdList.size() < 2) {
+			cout << "Command - fclose requires 1 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Close(cmdList[1]);
 	}
 	else if (cmd == "flseek") {
+		if (cmdList.size() < 4) {
+			cout << "Command - flseek needs 3 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Seek(cmdList[1], cmdList[2], cmdList[3]);
 	}
 
 	else if (cmd == "fread") {
+		if (cmdList.size() < 3) {
+			cout << "Command - fread needs 2 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Read(cmdList[1], cmdList[2]);
 	}
 	else if (cmd == "fwrite") {
+		if (cmdList.size() < 4) {
+			cout << "Command - fwrite needs 3 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Write(cmdList[1], cmdList[2], cmdList[3]);
 	}
-
 	else if (cmd == "fin") {
+		if (cmdList.size() < 3) {
+			cout << "Command - fin needs 2 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.FileIn(cmdList[1], cmdList[2]);
 	}
 	else if (cmd == "fout") {
+		if (cmdList.size() < 3) {
+			cout << "Command - fout needs 2 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.FileOut(cmdList[1], cmdList[2]);
 	}
 	else if (cmd == "mkdir") {
+		if (cmdList.size() < 2) {
+			cout << "Command - mkdir needs 1 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Mkdir(cmdList[1]);
 	}
 	else if (cmd == "rm") {
+		if (cmdList.size() < 2) {
+			cout << "Command - rm needs 1 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Delete(cmdList[1]);
 	}
 	else if (cmd == "ls") {
 		globalUser.Ls();
 	}
 	else if (cmd == "cd") {
+		if (cmdList.size() < 2) {
+			cout << "Command - cd needs 1 args!" << endl;
+			Usage();
+			return;
+		}
 		globalUser.Cd(cmdList[1]);
 	}
 	else if (cmd == "shutdown") {
 		//内存中所有有改变的Inode和SuperBlock的改变全部写回磁盘
 		//globalUser.Update();
+		//直接写在析构里了
 		cout << "All Changes Saved, Exiting" << endl;
 		exit(0);
 	}
@@ -123,6 +175,6 @@ void exeCmd(vector<string> cmdList){
 		return;
 	}
 	else {
-		cout << "未识别到的符号: " << cmd << endl;
+		cout << "未识别到的指令: " << cmd << endl;
 	}
 }

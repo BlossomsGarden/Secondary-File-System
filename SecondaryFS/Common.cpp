@@ -62,7 +62,7 @@ void exeCmd(vector<string> cmdList){
 
 	if (cmd == "fcreat") {
 		if (cmdList.size() < 3) {
-			cout << "Command - fcreat requires 2 args!" << endl;
+			cout << endl << "Command - fcreat requires 2 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -70,7 +70,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "fopen") {
 		if (cmdList.size() < 3) {
-			cout << "Command - fopen requires 2 args!" << endl;
+			cout << endl << "Command - fopen requires 2 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -78,7 +78,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "fclose") {
 		if (cmdList.size() < 2) {
-			cout << "Command - fclose requires 1 args!" << endl;
+			cout << endl << "Command - fclose requires 1 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -86,7 +86,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "flseek") {
 		if (cmdList.size() < 4) {
-			cout << "Command - flseek needs 3 args!" << endl;
+			cout << endl << "Command - flseek needs 3 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -95,7 +95,7 @@ void exeCmd(vector<string> cmdList){
 
 	else if (cmd == "fread") {
 		if (cmdList.size() < 3) {
-			cout << "Command - fread needs 2 args!" << endl;
+			cout << endl << "Command - fread needs 2 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -103,7 +103,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "fwrite") {
 		if (cmdList.size() < 4) {
-			cout << "Command - fwrite needs 3 args!" << endl;
+			cout << endl << "Command - fwrite needs 3 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -111,7 +111,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "fin") {
 		if (cmdList.size() < 3) {
-			cout << "Command - fin needs 2 args!" << endl;
+			cout << endl << "Command - fin needs 2 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -119,7 +119,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "fout") {
 		if (cmdList.size() < 3) {
-			cout << "Command - fout needs 2 args!" << endl;
+			cout << endl << "Command - fout needs 2 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -127,7 +127,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "mkdir") {
 		if (cmdList.size() < 2) {
-			cout << "Command - mkdir needs 1 args!" << endl;
+			cout << endl << "Command - mkdir needs 1 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -135,7 +135,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "rm") {
 		if (cmdList.size() < 2) {
-			cout << "Command - rm needs 1 args!" << endl;
+			cout << endl << "Command - rm needs 1 args!" << endl << endl;;
 			Usage();
 			return;
 		}
@@ -146,7 +146,7 @@ void exeCmd(vector<string> cmdList){
 	}
 	else if (cmd == "cd") {
 		if (cmdList.size() < 2) {
-			cout << "Command - cd needs 1 args!" << endl;
+			cout << endl << "Command - cd needs 1 args!" << endl << endl;;
 			Usage();
 			return;
 		}
